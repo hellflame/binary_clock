@@ -4,11 +4,13 @@ import time
 # it seem `numpy` not always available, or it will be much easy
 
 
-SMALL_BOX_EMPTY = u'\u25A1'
-SMALL_BOX_FULL = u'\u25A0'
+SMALL_BOX = (u'\u25A1', u'\u25A0')
 
-BIG_BOX_EMPTY = u'\u25A2'
-BIG_BOX_FULL = u'\u25A9'
+BIG_BOX = (u'\u25A2', u'\u25A9')
+
+BIG_BOX_SIMPLE = (' ', u'\u25A3')
+
+THEMES = ['raw', 'smallBox', 'bigBox', 'boxSimple']
 
 
 def to_matrix(n):
@@ -21,7 +23,26 @@ def to_matrix(n):
     return [[tmp[index][i] for index in range(len(tmp))] for i in range(4)]
 
 
+def line_print(theme, text):
+    for line in text:
+        if theme == 'smallBox':
+            print(" ".join([SMALL_BOX[int(x)] for x in line]))
+        elif theme == 'bigBox':
+            print(" ".join([BIG_BOX[int(x)] for x in line]))
+        elif theme == 'boxSimple':
+            print(" ".join([BIG_BOX_SIMPLE[int(x)] for x in line]))
+        else:
+            print(" ".join(line))
+
+
 def loop_watch(theme='basic', full=True, hint=True):
+    """
+    start watch click, control-C to stop
+    :param theme: basic|raw|smallBox|bigBox|boxSimple
+    :param full: Boolean
+    :param hint: Boolean
+    :return: None
+    """
     try:
         while True:
             t = time.localtime()
@@ -50,7 +71,7 @@ def loop_watch(theme='basic', full=True, hint=True):
                     sys.stdout.write("\033[F" * 6)
                 else:
                     sys.stdout.write("\033[F" * 3)
-            elif theme == 'raw':
+            elif theme in THEMES:
                 if full:
                     raw = '{month:0>2}{day:0>2}{week}{hour:0>2}{min:0>2}{sec:0>2}'.format(month=t.tm_mon,
                                                                                           day=t.tm_mday,
@@ -60,41 +81,36 @@ def loop_watch(theme='basic', full=True, hint=True):
                                                                                           sec=t.tm_sec)
                     result = to_matrix(raw)
                     if hint:
-                        for i in result:
-                            print(" ".join(i))
+                        line_print(theme, result)
                         print("_" * 21)
                         print('M M D D W h h m m s s')
                         print(' '.join(raw))
                     else:
-                        for i in result:
-                            print(" ".join(i))
+                        line_print(theme, result)
                 else:
                     raw = '{hour:0>2}{min:0>2}{sec:0>2}'.format(hour=t.tm_hour, min=t.tm_min, sec=t.tm_sec)
                     result = to_matrix(raw)
                     if hint:
-                        for i in result:
-                            print(" ".join(i))
+                        line_print(theme, result)
                         print("_" * 11)
                         print('h h m m s s')
                         print(' '.join(raw))
                     else:
-                        for i in result:
-                            print(" ".join(i))
+                        line_print(theme, result)
 
                 if hint:
                     sys.stdout.write("\033[F" * 7)
                 else:
                     sys.stdout.write("\033[F" * 4)
 
-
-            time.sleep(.1)
+            time.sleep(.05)
     except KeyboardInterrupt:
         if theme == 'basic':
             if full:
                 sys.stdout.write("\n" * 6)
             else:
                 sys.stdout.write("\n" * 3)
-        elif theme == 'raw':
+        elif theme in THEMES:
             if hint:
                 sys.stdout.write("\n" * 7)
             else:
@@ -102,4 +118,4 @@ def loop_watch(theme='basic', full=True, hint=True):
 
 
 if __name__ == '__main__':
-    loop_watch('raw', hint=True, full=False)
+    loop_watch('boxSimple', hint=False, full=False)
