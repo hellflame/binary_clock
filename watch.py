@@ -1,9 +1,11 @@
+"""A Binary Watch Presentation"""
 from __future__ import print_function
 import sys
 import time
 
 __version__ = '1.0.0'
 __author__ = 'hellflame'
+__url__ = 'https://github.com/hellflame/binary_clock'
 
 
 if sys.version_info.major == 2:
@@ -151,5 +153,18 @@ def loop_watch(theme='basic', full=True, hint=True, color=False):
                 sys.stdout.write("\n" * 4)
 
 
+def terminal():
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     version=__version__,
+                                     epilog="More Info " + __url__)
+    parser.add_argument('-l', '--loop', type=int, default=0, nargs='?',
+                        help='an integer for the accumulator')
+
+    args = parser.parse_args()
+    print(args)
+
+
 if __name__ == '__main__':
-    loop_watch('boxSimple', hint=False, full=False, color=False)
+    terminal()
+    # loop_watch('smallBox', hint=False, full=False, color=True)
