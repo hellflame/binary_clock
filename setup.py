@@ -29,5 +29,6 @@ setup(
         'Topic :: Terminals',
         'Topic :: Text Processing'
     ],
+    description="output a binary watch view in the terminal"
 )
 
