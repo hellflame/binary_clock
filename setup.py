@@ -12,7 +12,7 @@ setup(
     url=__url__,
     entry_points={
         'console_scripts': [
-            'bwatch=watch:main'
+            'bwatch=watch:terminal'
         ]
     },
     classifiers=[

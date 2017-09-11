@@ -5,7 +5,7 @@ import time
 
 __version__ = '1.0.0'
 __author__ = 'hellflame'
-__url__ = 'https://github.com/hellflame/binary_clock'
+__url__ = 'https://github.com/hellflame/binary_clock/tree/v' + __version__
 
 
 if sys.version_info.major == 2:
@@ -155,11 +155,21 @@ def loop_watch(theme='basic', full=True, hint=True, color=False):
 
 def terminal():
     import argparse
+
+    def available_themes(s):
+        if not s in THEMES and not s == 'basic':
+            raise argparse.ArgumentTypeError("`{}` is not a supported theme.\n`basic / {}` are available".format(s, " / ".join(THEMES.keys())))
+        return s
+
     parser = argparse.ArgumentParser(description=__doc__,
                                      version=__version__,
-                                     epilog="More Info " + __url__)
-    parser.add_argument('-l', '--loop', type=int, default=0, nargs='?',
-                        help='an integer for the accumulator')
+                                     epilog="More Info, visit " + __url__)
+    parser.add_argument('-nc', '--no-color', action='store_true', help="supress color output")
+    parser.add_argument('-g', '--glimpse', action="store_true", help="show only one moment time")
+    parser.add_argument('-f', '--full', action="store_true", help="output Month, Day, Week")
+    parser.add_argument('--hint', action="store_true", help="show easy read time outputs")
+    parser.add_argument('-t', '--theme', default="boxSimple", type=available_themes,
+                        help="choose output theme, default `boxSimple`.")
 
     args = parser.parse_args()
     print(args)
