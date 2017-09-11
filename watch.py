@@ -164,10 +164,10 @@ def terminal():
     parser = argparse.ArgumentParser(description=__doc__,
                                      version=__version__,
                                      epilog="More Info, visit " + __url__)
+    parser.add_argument('--hint', action="store_true", help="show easy read time outputs")
     parser.add_argument('-nc', '--no-color', action='store_true', help="supress color output")
     parser.add_argument('-g', '--glimpse', action="store_true", help="show only one moment time")
     parser.add_argument('-f', '--full', action="store_true", help="output Month, Day, Week")
-    parser.add_argument('--hint', action="store_true", help="show easy read time outputs")
     parser.add_argument('-t', '--theme', default="boxSimple", type=available_themes,
                         help="choose output theme, default `boxSimple`.")
 
