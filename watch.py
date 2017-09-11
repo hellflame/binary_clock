@@ -12,12 +12,12 @@ if sys.version_info.major == 2:
     reload(sys)
     sys.setdefaultencoding('utf8')
 
-COLORS = ['\033[01;34m{}\033[00m', '\033[01;34m{}\033[00m',
-          '\033[01;35m{}\033[00m', '\033[01;35m{}\033[00m',
-          '\033[01;31m{}\033[00m',
-          '\033[01;36m{}\033[00m', '\033[01;36m{}\033[00m',
-          '\033[01;32m{}\033[00m', '\033[01;32m{}\033[00m',
-          '\033[01;33m{}\033[00m', '\033[01;33m{}\033[00m']
+COLORS = ['\033[01;34m{}\033[00m', '\033[01;34m{}\033[00m',  # Month
+          '\033[01;35m{}\033[00m', '\033[01;35m{}\033[00m',  # Day
+          '\033[01;31m{}\033[00m',                           # Week
+          '\033[01;36m{}\033[00m', '\033[01;36m{}\033[00m',  # Hour
+          '\033[01;32m{}\033[00m', '\033[01;32m{}\033[00m',  # Min
+          '\033[01;33m{}\033[00m', '\033[01;33m{}\033[00m']  # Sec
 THEMES = {
     'raw': None,
     'smallBox': (u'\u25A1', u'\u25A0'),
@@ -157,7 +157,7 @@ def terminal():
     import argparse
 
     def available_themes(s):
-        if not s in THEMES and not s == 'basic':
+        if s not in THEMES and not s == 'basic':
             raise argparse.ArgumentTypeError("`{}` is not a supported theme.\n`basic / {}` are available".format(s, " / ".join(THEMES.keys())))
         return s
 
@@ -172,7 +172,10 @@ def terminal():
                         help="choose output theme, default `boxSimple`.")
 
     args = parser.parse_args()
-    print(args)
+    if args.glimpse:
+        glimpse(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
+    else:
+        loop_watch(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
 
 
 if __name__ == '__main__':
