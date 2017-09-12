@@ -3,7 +3,7 @@ from __future__ import print_function
 import sys
 import time
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __author__ = 'hellflame'
 __url__ = 'https://github.com/hellflame/binary_clock/tree/v' + __version__
 
@@ -23,12 +23,17 @@ THEMES = {
     'smallBox': (u'\u25A1', u'\u25A0'),
     'bigBox': (u'\u25A2', u'\u25A9'),
     'boxSimple': ('-', u'\u25A3'),
+    'boxBlank': (' ', u'\u25A3'),
     'circleSimple': ('-', u'\u25C9'),
-    'rhombusSimple': ('-', u'\u25C8')
+    'circleBlank': (' ', u'\u25C9'),
+    'rhombusSimple': ('-', u'\u25C8'),
+    'rhombusBlank': (' ', u'\u25C8'),
+    'plusSimple': ('-', '+'),
+    'plusBlank': (' ', '+')
 }
 
 
-def to_matrix(n):
+def transpose(n):
     """
     convert decimal to binary matrix (transposition), at most 4 bits deep ( because 9 < 15 )
     `numpy` seems not always available, or it will be much easier to do so using `numpy.concatenate`
@@ -127,7 +132,7 @@ def glimpse(theme='boxSimple', full=False, hint=False, color=False):
                                                                                   hour=t.tm_hour,
                                                                                   min=t.tm_min,
                                                                                   sec=t.tm_sec)
-            result = to_matrix(raw)
+            result = transpose(raw)
             if hint:
                 theme_print(theme, result, color)
                 print("_" * 21)
@@ -137,7 +142,7 @@ def glimpse(theme='boxSimple', full=False, hint=False, color=False):
                 theme_print(theme, result, color)
         else:
             raw = '{hour:0>2}{min:0>2}{sec:0>2}'.format(hour=t.tm_hour, min=t.tm_min, sec=t.tm_sec)
-            result = to_matrix(raw)
+            result = transpose(raw)
             if hint:
                 theme_print(theme, result, color)
                 print("_" * 11)
@@ -221,29 +226,49 @@ def terminal():
 
 if __name__ == '__main__':
     if True:
+        # default to unit test
         import unittest
         import random
+
         class TransTest(unittest.TestCase):
+            """transpose test cases"""
+            def random_gen(self, length):
+                target = ''.join([random.choice('0123456789') for _ in range(length)])
+                rand_choice = random.choice(range(length))
+
+                self.assertListEqual(list('{:0>4}'.format('{:b}'.format(int(target[rand_choice])))),
+                                     [transpose(target)[i][rand_choice] for i in range(4)])
+
             def test_simple(self):
-                self.assertListEqual([['0', '0'], ['0', '1'], ['0', '1'], ['1', '1']], to_matrix('17'))
+                self.assertListEqual([['0', '0'], ['0', '1'], ['0', '1'], ['1', '1']], transpose('17'))
 
             def test_complex(self):
-                target = ''.join([random.choice('0123456789') for _ in range(100)])
-                rand_choice = range.choice(range(100))
-                
+                self.random_gen(1)
+                self.random_gen(3)
+                self.random_gen(50)
+                self.random_gen(100)
+                self.random_gen(200)
 
             def test_empty(self):
-                self.assertListEqual([[], [], [], []], to_matrix(''))
+                self.assertListEqual([[], [], [], []], transpose(''))
+
+            def test_very_long(self):
+                self.random_gen(2 ** 20)
 
             def test_keep_always(self):
                 target = ''.join([random.choice('0123456789') for _ in range(100)])
-                self.assertListEqual(to_matrix(target), to_matrix(target))
+                self.assertListEqual(transpose(target),
+                                     transpose(target))
             
             def test_level1_depth(self):
-                self.assertEqual(len(to_matrix(''.join([random.choice('0123456789') for _ in range(100)]))), 4)
+                self.assertEqual(len(transpose(''.join([random.choice('0123456789')
+                                                        for _ in range(100)]))),
+                                 4)
 
             def test_level2_depth(self):
-                self.assertEqual(len(to_matrix(''.join([random.choice('0123456789') for _ in range(100)]))[0]), 100)
+                self.assertEqual(len(transpose(''.join([random.choice('0123456789')
+                                                        for _ in range(100)]))[0]),
+                                 100)
 
         unittest.main()
     else:
