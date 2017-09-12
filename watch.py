@@ -30,16 +30,42 @@ THEMES = {
 
 def to_matrix(n):
     """
-    convert decimal to binary matrix, at most 4 bits deep ( because 9 < 15 )
-    `numpy` seems not always available, or it will be much easy to do so
+    convert decimal to binary matrix (transposition), at most 4 bits deep ( because 9 < 15 )
+    `numpy` seems not always available, or it will be much easier to do so using `numpy.concatenate`
+
+    progress like:
+        n => bin(n) => [[0, 1, ...], [1, 1, ...], [1, 0, ...], [0, 0, ... ]]
+    eg:
+        n = '17'
+    =>  ['0001', '0111'] 
+    =>  [[0, 0], [0, 1], [0, 1], [1, 1]]
+
+    if print in the console, it may look like this:
+    from:
+        0 0 0 1
+        0 1 1 1
+    to:
+        0 0
+        0 1
+        0 1
+        1 1
+
     :param n: str (decimal int value)
-    :return: list
+    :return: list of 4 lists
     """
     tmp = ['{:0>4}'.format("{:b}".format(int(s))) for s in n]
     return [[tmp[index][i] for index in range(len(tmp))] for i in range(4)]
 
 
 def theme_print(theme, text, color=False):
+    """
+    print transposed text in the console
+
+    :param theme: str
+    :param text: list of 4 lists
+    :param color: bool
+    :return: None
+    """
     if color:
         if len(text[0]) == 11:
             for line in text:
@@ -62,6 +88,15 @@ def theme_print(theme, text, color=False):
 
 
 def glimpse(theme='boxSimple', full=False, hint=False, color=False):
+    """
+    show a glimpse of localtime
+
+    :param theme: str
+    :param full: bool
+    :param hint: bool
+    :param color: bool
+    :return: None
+    """
     t = time.localtime()
     if theme == 'basic':
         # Not So Pretty
@@ -114,7 +149,9 @@ def glimpse(theme='boxSimple', full=False, hint=False, color=False):
 
 def loop_watch(theme='basic', full=True, hint=True, color=False):
     """
-    start watch click, control-C to stop
+    start watch click, control-C to stop, 
+    this basically just keep calling `glimpse` 
+
     :param theme: print style choice
     :param full: set True to print full length date time string
     :param hint: set True to print human-readable date time or else, programmer-readable date time
@@ -141,6 +178,7 @@ def loop_watch(theme='basic', full=True, hint=True, color=False):
                     sys.stdout.write("\033[F" * 4)
             time.sleep(.05)
     except KeyboardInterrupt:
+        #  Control-C pressed
         if theme == 'basic':
             if full:
                 sys.stdout.write("\n" * 6)
@@ -154,6 +192,9 @@ def loop_watch(theme='basic', full=True, hint=True, color=False):
 
 
 def terminal():
+    """
+    command line entry
+    """
     import argparse
 
     def available_themes(s):
@@ -179,5 +220,41 @@ def terminal():
 
 
 if __name__ == '__main__':
-    terminal()
+    if True:
+        import unittest
+        import random
+        class TransTest(unittest.TestCase):
+            def test_simple(self):
+                self.assertListEqual([['0', '0'], ['0', '1'], ['0', '1'], ['1', '1']], to_matrix('17'))
+
+            def test_complex(self):
+                target = ''.join([random.choice('0123456789') for _ in range(100)])
+                rand_choice = range.choice(range(100))
+                
+
+            def test_empty(self):
+                self.assertListEqual([[], [], [], []], to_matrix(''))
+
+            def test_keep_always(self):
+                target = ''.join([random.choice('0123456789') for _ in range(100)])
+                self.assertListEqual(to_matrix(target), to_matrix(target))
+            
+            def test_level1_depth(self):
+                self.assertEqual(len(to_matrix(''.join([random.choice('0123456789') for _ in range(100)]))), 4)
+
+            def test_level2_depth(self):
+                self.assertEqual(len(to_matrix(''.join([random.choice('0123456789') for _ in range(100)]))[0]), 100)
+
+        unittest.main()
+    else:
+        terminal()
     # loop_watch('smallBox', hint=False, full=False, color=True)
+
+
+
+
+
+
+
+
+
