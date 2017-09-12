@@ -7,6 +7,7 @@ __version__ = '1.0.4'
 __author__ = 'hellflame'
 __url__ = 'https://github.com/hellflame/binary_clock/tree/v' + __version__
 
+__all__ = ['glimpse', 'loop_watch']
 
 if sys.version_info.major == 2:
     reload(sys)

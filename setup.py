@@ -5,11 +5,11 @@ setup(
     name='bwatch',
     version=__version__,
     author=__author__,
-    py_modules=['watch'],
     author_email="hellflamedly@gmail.com",
     keywords=('binary watch', ),
     license='MIT',
     url=__url__,
+    py_modules=['watch'],
     entry_points={
         'console_scripts': [
             'bwatch=watch:terminal'
