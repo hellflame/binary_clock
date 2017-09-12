@@ -214,18 +214,23 @@ def terminal():
     parser.add_argument('-nc', '--no-color', action='store_true', help="supress color output")
     parser.add_argument('-g', '--glimpse', action="store_true", help="show only one moment time")
     parser.add_argument('-f', '--full', action="store_true", help="output Month, Day, Week")
+    parser.add_argument('-l', '--list-theme', action="store_true", help="list available themes")
     parser.add_argument('-t', '--theme', default="boxSimple", type=available_themes,
                         help="choose output theme, default `boxSimple`.")
 
     args = parser.parse_args()
-    if args.glimpse:
-        glimpse(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
+    if args.list_theme:
+        print("These are available themes:\nbasic")
+        print("\n".join(THEMES.keys()))
     else:
-        loop_watch(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
+        if args.glimpse:
+            glimpse(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
+        else:
+            loop_watch(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
 
 
 if __name__ == '__main__':
-    if True:
+    if False:
         # default to unit test
         import unittest
         import random
