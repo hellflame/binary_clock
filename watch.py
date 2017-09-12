@@ -3,7 +3,7 @@ from __future__ import print_function
 import sys
 import time
 
-__version__ = '1.0.1'
+__version__ = '1.0.4'
 __author__ = 'hellflame'
 __url__ = 'https://github.com/hellflame/binary_clock/tree/v' + __version__
 
@@ -204,17 +204,19 @@ def terminal():
 
     def available_themes(s):
         if s not in THEMES and not s == 'basic':
-            raise argparse.ArgumentTypeError("`{}` is not a supported theme.\n`basic / {}` are available".format(s, " / ".join(THEMES.keys())))
+            raise argparse.ArgumentTypeError("`{}` is not a supported theme."
+                                             "\n`basic / {}` are available".format(s,
+                                                                                   " / ".join(THEMES.keys())))
         return s
 
     parser = argparse.ArgumentParser(description=__doc__,
-                                     version=__version__,
                                      epilog="More Info, visit " + __url__)
     parser.add_argument('--hint', action="store_true", help="show easy read time outputs")
     parser.add_argument('-nc', '--no-color', action='store_true', help="supress color output")
     parser.add_argument('-g', '--glimpse', action="store_true", help="show only one moment time")
     parser.add_argument('-f', '--full', action="store_true", help="output Month, Day, Week")
     parser.add_argument('-l', '--list-theme', action="store_true", help="list available themes")
+    parser.add_argument('-v', '--version', action="store_true", help="display version info")
     parser.add_argument('-t', '--theme', default="boxSimple", type=available_themes,
                         help="choose output theme, default `boxSimple`.")
 
@@ -222,6 +224,8 @@ def terminal():
     if args.list_theme:
         print("These are available themes:\nbasic")
         print("\n".join(THEMES.keys()))
+    elif args.version:
+        print('binary watch version: ' + __version__)
     else:
         if args.glimpse:
             glimpse(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
@@ -230,7 +234,7 @@ def terminal():
 
 
 if __name__ == '__main__':
-    if False:
+    if True:
         # default to unit test
         import unittest
         import random
