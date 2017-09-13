@@ -60,7 +60,6 @@ def transpose(n):
     :return: list of 4 lists
     """
     tmp = ['{:0>4}'.format("{:b}".format(int(s))) for s in n]
-    # TODO:: convert list to tuple
     return [[tmp[index][i] for index in range(len(tmp))] for i in range(4)]
 
 
@@ -236,8 +235,8 @@ def terminal():
 
 
 if __name__ == '__main__':
-    # TODO:: Test switch
-    if True:
+    import sys
+    if len(sys.argv) == 1:
         # default to unit test
         import unittest
         import random
