@@ -3,7 +3,7 @@ from __future__ import print_function
 import sys
 import time
 
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 __author__ = 'hellflame'
 __url__ = 'https://github.com/hellflame/binary_clock/tree/v' + __version__
 
@@ -93,17 +93,28 @@ def theme_print(theme, text, color=False):
                 print(" ".join(line))
 
 
-def glimpse(theme='boxSimple', full=False, hint=False, color=False):
+# TODO:: time zone choose
+def glimpse(theme='boxSimple', full=False, hint=False, color=False, universal=False):
     """
     show a glimpse of localtime
 
-    :param theme: str
-    :param full: bool
-    :param hint: bool
-    :param color: bool
+    :param theme: print style choice
+    :param full: set True to print full length date time string
+    :param hint: set True to print human-readable date time or else, programmer-readable date time
+    :param color: set True to print colorful columns, more easy to read
+    :param universal: set True to print utc time
+
+    :type theme: str
+    :type full: bool
+    :type hint: bool
+    :type color: bool
+    :type universal: bool
     :return: None
     """
-    t = time.localtime()
+    if universal:
+        t = time.gmtime()
+    else:
+        t = time.localtime()
     if theme == 'basic':
         # Not So Pretty
         if full:
@@ -153,7 +164,7 @@ def glimpse(theme='boxSimple', full=False, hint=False, color=False):
                 theme_print(theme, result, color)
 
 
-def loop_watch(theme='basic', full=True, hint=True, color=False):
+def loop_watch(theme='basic', full=True, hint=True, color=False, universal=False):
     """
     start watch click, control-C to stop, 
     this basically just keep calling `glimpse` 
@@ -162,16 +173,18 @@ def loop_watch(theme='basic', full=True, hint=True, color=False):
     :param full: set True to print full length date time string
     :param hint: set True to print human-readable date time or else, programmer-readable date time
     :param color: set True to print colorful columns, more easy to read
+    :param universal: set True to print utc time
 
-    :type theme: String
-    :type full: Boolean
-    :type hint: Boolean
-    :type color: Boolean
+    :type theme: str
+    :type full: bool
+    :type hint: bool
+    :type color: bool
+    :type universal: bool
     :return: None
     """
     try:
         while True:
-            glimpse(theme, full, hint, color)
+            glimpse(theme, full, hint, color, universal)
             if theme == 'basic':
                 if full:
                     sys.stdout.write("\033[F" * 6)
@@ -218,6 +231,7 @@ def terminal():
     parser.add_argument('-f', '--full', action="store_true", help="output Month, Day, Week")
     parser.add_argument('-l', '--list-theme', action="store_true", help="list available themes")
     parser.add_argument('-v', '--version', action="store_true", help="display version info")
+    parser.add_argument('-u', '--universal', action="store_true", help="use utc time instead of localtime")
     parser.add_argument('-t', '--theme', default="boxSimple", type=available_themes,
                         help="choose output theme, default `boxSimple`.")
 
@@ -229,9 +243,11 @@ def terminal():
         print('binary watch version: ' + __version__)
     else:
         if args.glimpse:
-            glimpse(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
+            glimpse(args.theme, full=args.full, hint=args.hint,
+                    color=not args.no_color, universal=args.universal)
         else:
-            loop_watch(args.theme, full=args.full, hint=args.hint, color=not args.no_color)
+            loop_watch(args.theme, full=args.full, hint=args.hint,
+                       color=not args.no_color, universal=args.universal)
 
 
 if __name__ == '__main__':
