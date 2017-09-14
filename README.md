@@ -92,6 +92,13 @@ $ bwatch --hint
 $ bwatch -u # bwatch --universal
 ```
 
+#### viv. 设置时区
+
+```bash
+# 东八区
+$ bwatch -z 8 # bwatch --zone 8
+```
+
 #### 命令组合
 
 ```bash

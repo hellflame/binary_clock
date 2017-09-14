@@ -93,8 +93,7 @@ def theme_print(theme, text, color=False):
                 print(" ".join(line))
 
 
-# TODO:: time zone choose
-def glimpse(theme='boxSimple', full=False, hint=False, color=False, universal=False):
+def glimpse(theme='boxSimple', full=False, hint=False, color=False, universal=False, timezone=None):
     """
     show a glimpse of localtime
 
@@ -103,18 +102,25 @@ def glimpse(theme='boxSimple', full=False, hint=False, color=False, universal=Fa
     :param hint: set True to print human-readable date time or else, programmer-readable date time
     :param color: set True to print colorful columns, more easy to read
     :param universal: set True to print utc time
+    :param timezone: set Time zone
 
     :type theme: str
     :type full: bool
     :type hint: bool
     :type color: bool
     :type universal: bool
+    :type timezone: None
     :return: None
     """
-    if universal:
-        t = time.gmtime()
+    if timezone is None:
+        if universal:
+            t = time.gmtime()
+        else:
+            t = time.localtime()
     else:
-        t = time.localtime()
+
+        t = time.gmtime(time.time() + int(timezone) * 3600)
+
     if theme == 'basic':
         # Not So Pretty
         if full:
@@ -164,7 +170,7 @@ def glimpse(theme='boxSimple', full=False, hint=False, color=False, universal=Fa
                 theme_print(theme, result, color)
 
 
-def loop_watch(theme='basic', full=True, hint=True, color=False, universal=False):
+def loop_watch(theme='basic', full=True, hint=True, color=False, universal=False, timezone=None):
     """
     start watch click, control-C to stop, 
     this basically just keep calling `glimpse` 
@@ -174,17 +180,19 @@ def loop_watch(theme='basic', full=True, hint=True, color=False, universal=False
     :param hint: set True to print human-readable date time or else, programmer-readable date time
     :param color: set True to print colorful columns, more easy to read
     :param universal: set True to print utc time
+    :param timezone: set Time zone
 
     :type theme: str
     :type full: bool
     :type hint: bool
     :type color: bool
     :type universal: bool
+    :type timezone: None
     :return: None
     """
     try:
         while True:
-            glimpse(theme, full, hint, color, universal)
+            glimpse(theme, full, hint, color, universal, timezone)
             if theme == 'basic':
                 if full:
                     sys.stdout.write("\033[F" * 6)
@@ -232,6 +240,7 @@ def terminal():
     parser.add_argument('-l', '--list-theme', action="store_true", help="list available themes")
     parser.add_argument('-v', '--version', action="store_true", help="display version info")
     parser.add_argument('-u', '--universal', action="store_true", help="use utc time instead of localtime")
+    parser.add_argument('-z', '--zone', help="set timezone", type=int)
     parser.add_argument('-t', '--theme', default="boxSimple", type=available_themes,
                         help="choose output theme, default `boxSimple`.")
 
@@ -244,16 +253,21 @@ def terminal():
     else:
         if args.glimpse:
             glimpse(args.theme, full=args.full, hint=args.hint,
-                    color=not args.no_color, universal=args.universal)
+                    color=not args.no_color, universal=args.universal,
+                    timezone=args.zone)
         else:
             loop_watch(args.theme, full=args.full, hint=args.hint,
-                       color=not args.no_color, universal=args.universal)
+                       color=not args.no_color, universal=args.universal,
+                       timezone=args.zone)
 
 
 if __name__ == '__main__':
     import sys
     if len(sys.argv) == 1:
         # default to unit test
+        # time spend:
+        # pypy3 < CPython3 < Cpython2
+        #   4s  <    7s    <    10s 
         import unittest
         import random
 
@@ -300,13 +314,3 @@ if __name__ == '__main__':
         unittest.main()
     else:
         terminal()
-    # loop_watch('smallBox', hint=False, full=False, color=True)
-
-
-
-
-
-
-
-
-
